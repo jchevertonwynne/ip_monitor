@@ -36,6 +36,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "conf_parser"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a512ceb0473d363ab88602ace9983ea43c024c8028c5068652c1ccb2a55b6902"
+
+[[package]]
 name = "crc32fast"
 version = "1.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -89,6 +95,7 @@ name = "ip_monitor"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "conf_parser",
  "ureq",
 ]
 
