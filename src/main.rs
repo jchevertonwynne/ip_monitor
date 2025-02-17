@@ -11,6 +11,7 @@ fn main() -> anyhow::Result<()> {
     println!("stored ip = {stored_ip} external ip = {external_ip}");
 
     if external_ip == stored_ip {
+        ensure_git_pushed()?;
         return Ok(());
     }
 
@@ -37,37 +38,49 @@ fn update_stored_ip(ip: &str) -> anyhow::Result<()> {
 
     println!("updated README.md");
 
+    ensure_git_pushed()?;
+
+    Ok(())
+}
+
+fn ensure_git_pushed() -> Result<(), anyhow::Error> {
     let cwd = std::path::Path::new(PATH)
         .parent()
         .context("should remove filename from path")?;
     std::env::set_current_dir(cwd)?;
 
-    let out = String::from_utf8(
-        std::process::Command::new("git")
-            .args(["add", "README.md"])
-            .output()
-            .context("failed to add README.md update to git")?
-            .stdout,
-    )?;
-    println!("{out}");
+    let res = std::process::Command::new("git")
+        .args(["add", "README.md"])
+        .output()
+        .context("failed to add README.md update to git")?;
+    let out_success = String::from_utf8(res.stdout)?;
+    let out_error = String::from_utf8(res.stderr)?;
+    println!(
+        "git add status: {}\n\tstdout: {out_success:?}\n\tstderr: {out_error:?}",
+        res.status
+    );
 
-    let out = String::from_utf8(
-        std::process::Command::new("git")
-            .args(["commit", "-m", "automated ip update"])
-            .output()
-            .context("failed to commit README.md update to git")?
-            .stdout,
-    )?;
-    println!("{out}");
+    let res = std::process::Command::new("git")
+        .args(["commit", "-m", "automated ip update"])
+        .output()
+        .context("failed to commit README.md update to git")?;
+    let out_success = String::from_utf8(res.stdout)?;
+    let out_error = String::from_utf8(res.stderr)?;
+    println!(
+        "git commit status: {}\n\tstdout: {out_success:?}\n\tstderr: {out_error:?}",
+        res.status
+    );
 
-    let out = String::from_utf8(
-        std::process::Command::new("git")
-            .args(["push"])
-            .output()
-            .context("failed to push README.md update to git")?
-            .stdout,
-    )?;
-    println!("{out}");
+    let res = std::process::Command::new("git")
+        .args(["push"])
+        .output()
+        .context("failed to push README.md update to git")?;
+    let out_success = String::from_utf8(res.stdout)?;
+    let out_error = String::from_utf8(res.stderr)?;
+    println!(
+        "git push status: {}\n\tstdout: {out_success:?}\n\tstderr: {out_error:?}",
+        res.status
+    );
 
     Ok(())
 }
